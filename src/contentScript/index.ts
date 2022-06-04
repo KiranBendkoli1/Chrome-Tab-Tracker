@@ -1,19 +1,26 @@
-// If your extension doesn't need a content script, just leave this file empty
+/*global chrome*/
 
-// This is an example of a script that will run on every page. This can alter pages
-// Don't forget to change `matches` in manifest.json if you want to only change specific webpages
-printAllPageLinks();
+import { addDoc, collection } from "firebase/firestore";
+import { db, auth } from "../firebase";
 
-// This needs to be an export due to typescript implementation limitation of needing '--isolatedModules' tsconfig
-export function printAllPageLinks() {
-  const allLinks = Array.from(document.querySelectorAll('a')).map(
-    link => link.href
-  );
-
-  console.log('-'.repeat(30));
-  console.log(
-    `These are all ${allLinks.length} links on the current page that have been printed by the Sample Create React Extension`
-  );
-  console.log(allLinks);
-  console.log('-'.repeat(30));
+Upload();
+export default async function Upload() {
+  const date = new Date();
+  const email = await localStorage.getItem("email");
+  const myemail = auth.currentUser;
+  const dt = date.toLocaleDateString() + "  " + date.toLocaleTimeString();
+  console.log("email : ", email);
+  console.log("my email : ", myemail);
+  const url = window.location.href;
+  console.log(url);
+  chrome.storage.sync.get(["email"], function (result) {
+    try {
+      addDoc(collection(db, result.email), {
+        url: url,
+        datetime: dt,
+      });
+    } catch (error) {
+      alert(error!);
+    }
+  });
 }
