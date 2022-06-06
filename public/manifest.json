@@ -13,7 +13,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "exclude_matches":["https://console.firebase.google.com/u/0/project/tab-tracker-ext/*"],
       "js": ["contentScript.bundle.js"]
     }
   ],
